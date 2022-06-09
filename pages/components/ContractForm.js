@@ -26,8 +26,8 @@ const CButton = (props) => {
   );
 };
 
-const ContractForm = ({ abi, contract }) => {
-  console.log("Loading...!!", contract);
+const ContractForm = ({ abi }) => {
+  console.log("Loading...!!");
   const { register, handleSubmit } = useForm();
   const [formMap, setFormMap] = useState({});
 
@@ -63,7 +63,8 @@ const ContractForm = ({ abi, contract }) => {
 
   const onSubmit = (data, event) => {
     const buttonClicked = event.nativeEvent.submitter.name;
-    debugger
+    const { contract } = window.web3Obj;
+debugger
     getMethod(contract, buttonClicked, data[buttonClicked])
       .then((resp) => {
         toast(
@@ -75,7 +76,9 @@ const ContractForm = ({ abi, contract }) => {
           [buttonClicked]: resp,
         });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

@@ -30,8 +30,12 @@ export default function Home({ contracts }) {
       const wallets = await connectWalletAsync();
       const cont = new Contract(
         selectedContractArtifact.abi,
-        "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        "0x5fbdb2315678afecb367f032d93f642f64180aa3"
       );
+      window.web3Obj = {
+        defaultAccount: wallets[0],
+        contract: cont,
+      };
       setContract(cont);
       setAccounts(accs);
       setConnectedWallet(wallets[0]);
@@ -39,12 +43,9 @@ export default function Home({ contracts }) {
   }, []);
 
   return (
-    <div className="text-red-600">
+    <div>
       <ToastContainer></ToastContainer>
-      <ContractForm
-        abi={selectedContractArtifact.abi}
-        contract={contract}
-      ></ContractForm>
+      <ContractForm abi={selectedContractArtifact.abi}></ContractForm>
     </div>
   );
 }
