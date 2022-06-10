@@ -10,6 +10,9 @@ const useWeb3 = () => {
       const Contract = web3.eth.Contract;
       const getAccountsAsync = web3.eth.getAccounts;
       const connector = window.ethereum;
+      window["web3Obj"] = {
+        web3
+      }
       const connectWalletAsync = () =>
         new Promise((resolve, reject) => {
           connector
@@ -24,6 +27,7 @@ const useWeb3 = () => {
         getAccountsAsync,
         connectWalletAsync,
         Contract,
+        web3,
       });
     };
 

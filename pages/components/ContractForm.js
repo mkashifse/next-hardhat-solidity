@@ -26,18 +26,19 @@ const CButton = (props) => {
   );
 };
 
-const ContractForm = ({ abi }) => {
-  console.log("Loading...!!");
+const useContractForm = () => {
   const { register, handleSubmit } = useForm();
   const [formMap, setFormMap] = useState({});
+  const [blocks, setBlocks] = useState([]);
+  const [allTransactions, setAllTransactions] = useState([]);
 
-  const { getMethod } = useWeb3();
+  const { getMethod, useConnect } = useWeb3();
 
   const Inputs = ({ inputs, register, fieldName }) => {
     if (inputs.length) {
       return inputs.map((item, i) => (
         <CText
-          key={i}
+          key={i + fieldName}
           placeholder={item.name}
           name={fieldName}
           register={register}
@@ -50,7 +51,7 @@ const ContractForm = ({ abi }) => {
     if (outputs.length) {
       return outputs.map((item, i) => (
         <CText
-          key={i}
+          key={i + value}
           disabled
           placeholder={fieldName}
           name={fieldName}
@@ -63,10 +64,9 @@ const ContractForm = ({ abi }) => {
 
   const onSubmit = (data, event) => {
     const buttonClicked = event.nativeEvent.submitter.name;
-    const { contract } = window.web3Obj;
-debugger
+    const { contract, web3 } = window["web3Obj"];
     getMethod(contract, buttonClicked, data[buttonClicked])
-      .then((resp) => {
+      .then(async (resp) => {
         toast(
           `${buttonClicked} is executed successfully.!`,
           `Contract Function Success Call`
@@ -75,43 +75,74 @@ debugger
           ...formMap,
           [buttonClicked]: resp,
         });
+
+        const earliest = await web3.eth.getBlock("earliest");
+        const latest = await web3.eth.getBlock("latest");
+        const blocksPromises = [];
+        for (let b = earliest.number; b < latest.number; b++) {
+          blocksPromises.push(web3.eth.getBlock(b));
+        }
+
+        const blcks = await Promise.all(blocksPromises);
+        setBlocks(blcks);
+
+        const trx = await Promise.all(
+          blcks
+            .flatMap((item) => item.transactions)
+            .map((block) => web3.eth.getTransaction(block))
+        );
+
+        setAllTransactions(trx);
+
+        console.log(blcks, trx);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="max-w-lg m-auto divide-y">
-        {abi.map((item, i) => {
-          if (item.name) {
-            return (
-              <div className="flex py-2 gap-2" key={i}>
-                <div className="w-1/3">
-                  <CButton name={item.name}>{item.name}</CButton>
-                </div>
+  const ContractForm = ({ abi }) => {
+    return (
+      <form onSubmit={handleSubmit(onSubmit)} className="m-auto">
+        <div className=" divide-y">
+          {abi.map((item, i) => {
+            if (item.name) {
+              return (
+                <div
+                  className="flex m-auto py-2 gap-2 w-full"
+                  key={i + item.name}
+                >
+                  <div className="w-1/3">
+                    <CButton name={item.name}>{item.name}</CButton>
+                  </div>
 
-                <div className="w-2/3 flex">
-                  {Inputs({
-                    inputs: item.inputs,
-                    register,
-                    fieldName: item.name,
-                  })}
-                  {Outputs({
-                    outputs: item.outputs,
-                    register,
-                    fieldName: item.name,
-                    value: formMap[item.name],
-                  })}
+                  <div className="w-2/3 flex">
+                    {Inputs({
+                      inputs: item.inputs,
+                      register,
+                      fieldName: item.name,
+                    })}
+                    {Outputs({
+                      outputs: item.outputs,
+                      register,
+                      fieldName: item.name,
+                      value: formMap[item.name],
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          }
-        })}
-      </div>
-    </form>
-  );
+              );
+            }
+          })}
+        </div>
+      </form>
+    );
+  };
+
+  return {
+    ContractForm,
+    blocks,
+    allTransactions,
+  };
 };
 
-export { ContractForm, CButton, CText };
+export { useContractForm, CButton, CText };
