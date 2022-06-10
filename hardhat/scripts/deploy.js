@@ -5,7 +5,7 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const {
-  promises: { readdir, readFile },
+  promises: { readdir, readFile, writeFile },
 } = require("fs");
 
 const compileAndDeployAllContracts = async () => {
@@ -27,11 +27,20 @@ const compileAndDeployAllContracts = async () => {
     );
 
     await Promise.all(deployableContracts.map((item) => item.deployed()));
-    console.log(deployableContracts.map((item) => item.address));
+    const adresses = deployableContracts.map((item) => item.address);
     console.log(
       `Deployed ${
         deployableContracts.length
       } contracts: ${contractsFileNames.join(",")}`
+    );
+    writeFile(
+      "./../../contractsAdresses.json",
+      adresses,
+      "utf8",
+      (err, resp) => {
+        if (err) console.error(err);
+        else console.log(resp);
+      }
     );
   } catch (error) {
     console.error(error);
