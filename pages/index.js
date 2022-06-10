@@ -13,10 +13,11 @@ const fetchContracts = async (fetchOnly = true) => {
 
 export const getStaticProps = async () => {
   const { artifacts, addresses } = await fetchContracts();
+  console.log(addresses);
   return {
     props: {
       artifacts,
-      contractAddresses: JSON.parse(addresses),
+      contractAddresses: addresses,
     },
   };
 };
@@ -47,7 +48,6 @@ export default function Home({ artifacts, contractAddresses }) {
   };
 
   useEffect(() => {
-    console.log(artifacts);
     setAddresses(contractAddresses);
     setContractsArtifacts(artifacts);
     setSelectedContractArtifact(artifacts[0]);
@@ -58,7 +58,7 @@ export default function Home({ artifacts, contractAddresses }) {
       init(async ({ getAccountsAsync, connectWalletAsync, Contract }) => {
         const accs = await getAccountsAsync();
         const wallets = await connectWalletAsync();
-        const cont = new Contract(selectedContractArtifact.abi, addresses[0]);
+        const cont = new Contract(selectedContractArtifact.abi, "0x5FbDB2315678afecb367f032d93F642f64180aa3");
         window.web3Obj = {
           ...window.web3Obj,
           defaultAccount: wallets[0],

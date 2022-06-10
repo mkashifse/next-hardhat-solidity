@@ -31,7 +31,8 @@ const compileAndDeployAllContracts = async () => {
     console.log(
       `Deployed ${
         deployableContracts.length
-      } contracts: ${contractsFileNames.join(",")}`
+      } contracts: ${contractsFileNames.join(",")}`,
+      adresses
     );
     writeFile(
       "./../../contractsAdresses.json",
