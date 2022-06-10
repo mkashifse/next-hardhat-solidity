@@ -6,6 +6,7 @@ const useWeb3 = () => {
       new Web3.providers.WebsocketProvider("ws://127.0.0.1:8545/")
     );
 
+
     const init = (callback) => {
       const Contract = web3.eth.Contract;
       const getAccountsAsync = web3.eth.getAccounts;
