@@ -2,29 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import useWeb3 from "./useWeb3";
 import { toast } from "react-toastify";
-
-const CText = (props) => {
-  const { register, ...others } = props;
-  return (
-    <input
-      {...others}
-      {...register(props.name)}
-      className="text-sm p-2 px-4 rounded border w-full"
-    ></input>
-  );
-};
-
-const CButton = (props) => {
-  return (
-    <button
-      type="submit"
-      {...props}
-      className="rounded px-3 p-2 h-full bg-indigo-400 w-full text-white text-sm shadow shadow-indigo-300"
-    >
-      {props.children}
-    </button>
-  );
-};
+import { Button, Input } from "./kit";
 
 const useContractForm = () => {
   const { register, handleSubmit } = useForm();
@@ -34,35 +12,8 @@ const useContractForm = () => {
 
   const { getMethod, useConnect } = useWeb3();
 
-  const Inputs = ({ inputs, register, fieldName }) => {
-    if (inputs.length) {
-      return inputs.map((item, i) => (
-        <CText
-          key={i + fieldName}
-          placeholder={item.name}
-          name={fieldName}
-          register={register}
-        ></CText>
-      ));
-    }
-  };
-
-  const Outputs = ({ outputs, register, fieldName, value }) => {
-    if (outputs.length) {
-      return outputs.map((item, i) => (
-        <CText
-          key={i + value}
-          disabled
-          placeholder={fieldName}
-          name={fieldName}
-          register={register}
-          value={value}
-        ></CText>
-      ));
-    }
-  };
-
   const onSubmit = (data, event) => {
+    debugger;
     const buttonClicked = event.nativeEvent.submitter.name;
     const { contract, web3 } = window["web3Obj"];
     getMethod(contract, buttonClicked, data[buttonClicked])
@@ -111,21 +62,36 @@ const useContractForm = () => {
                   key={i + item.name}
                 >
                   <div className="w-1/3">
-                    <CButton name={item.name}>{item.name}</CButton>
+                    <Button css="w-full" name={item.name}>
+                      {item.name}
+                    </Button>
                   </div>
 
                   <div className="w-2/3 flex">
-                    {Inputs({
-                      inputs: item.inputs,
-                      register,
-                      fieldName: item.name,
-                    })}
-                    {Outputs({
-                      outputs: item.outputs,
-                      register,
-                      fieldName: item.name,
-                      value: formMap[item.name],
-                    })}
+                    {item.outputs && item.outputs.length
+                      ? item.outputs.map((output, j) => (
+                          <Input
+                            key={j}
+                            disabled
+                            placeholder={item.name}
+                            name={item.name}
+                            register={register}
+                            value={formMap[item.name]}
+                          ></Input>
+                        ))
+                      : ""}
+
+                    {item.inputs && item.inputs.length
+                      ? item.inputs.map((inp, k) => (
+                          <Input
+                            key={k}
+                            placeholder={item.name}
+                            name={item.name}
+                            value={formMap[item.name]}
+                            register={register}
+                          ></Input>
+                        ))
+                      : ""}
                   </div>
                 </div>
               );
@@ -143,4 +109,4 @@ const useContractForm = () => {
   };
 };
 
-export { useContractForm, CButton, CText };
+export { useContractForm };

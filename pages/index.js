@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import useWeb3 from "./components/useWeb3";
 import { ToastContainer, toast } from "react-toastify";
 import { useContractForm } from "./components/ContractForm";
+import { Button, Input, Select } from "./components/kit";
 
 const fetchContracts = async (fetchOnly = true) => {
   const resp = await fetch(
@@ -60,7 +61,7 @@ export default function Home({ artifacts, contractAddresses }) {
           selectedContractArtifact.abi,
           contractAddresses[0],
           {
-            from:  wallets[0],
+            from: wallets[0],
             gasPrice: "20000000000",
           }
         );
@@ -92,6 +93,17 @@ export default function Home({ artifacts, contractAddresses }) {
   return (
     <div>
       <ToastContainer></ToastContainer>
+      <div className="border p-2 border-b flex justify-between text-sm">
+        <div>
+          <Input></Input>
+          <Select>
+            <option>Salam</option>
+          </Select>
+        </div>
+        <div>
+          <Button onClick={() => onDeploy()}>Deploy</Button>
+        </div>
+      </div>
       <div>{connectedWallet}</div>
       <div className="flex divide-x h-screen p-4">
         <div>
@@ -108,16 +120,7 @@ export default function Home({ artifacts, contractAddresses }) {
             <ContractForm abi={selectedContractArtifact.abi}></ContractForm>
           )}
         </div>
-        <div>
-          <button
-            onClick={() => onDeploy()}
-            className={`px-6 p-2 rounded-xl hover:opacity-90 text-green-900 font-semibold shadow-md bg-green-300 shadow-green-300 ${
-              isLoadingArtifacts ? "animate-pulse" : ""
-            }`}
-          >
-            DEPLOY CONTRACTS
-          </button>
-        </div>
+        <div></div>
       </div>
     </div>
   );
