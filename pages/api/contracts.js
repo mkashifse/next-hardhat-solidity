@@ -30,7 +30,7 @@ const fetchAddresses = () => {
 
 const compileAndDeploy = () => {
   return new Promise((resole, reject) => {
-    exec("cd hardhat & npm run deploy", async (err, resp) => {
+    exec("cd hardhat && npm run deploy", async (err, resp) => {
       if (err) reject(err);
       else {
         resole(fetchArtifacts());

@@ -36,7 +36,7 @@ const compileAndDeployAllContracts = async () => {
     );
     writeFile(
       "./../../contractsAdresses.json",
-      adresses,
+      JSON.stringify(adresses),
       "utf8",
       (err, resp) => {
         if (err) console.error(err);

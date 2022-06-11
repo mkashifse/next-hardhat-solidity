@@ -23,4 +23,8 @@ contract Greeter {
     function getMessage() public view returns (string memory) {
         return "This is new Message";
     }
+
+    function anotherMethod() public pure returns (string memory) {
+        return "Another message";
+    }
 }

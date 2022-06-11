@@ -13,16 +13,16 @@ const fetchContracts = async (fetchOnly = true) => {
 
 export const getStaticProps = async () => {
   const { artifacts, addresses } = await fetchContracts();
-  console.log(addresses);
   return {
     props: {
       artifacts,
-      contractAddresses: addresses,
+      contractAddresses: JSON.parse(addresses),
     },
   };
 };
 
 export default function Home({ artifacts, contractAddresses }) {
+  debugger;
   const { getMethod, useConnect } = useWeb3();
   const { init, web3 } = useConnect();
   const { ContractForm } = useContractForm();
@@ -40,11 +40,10 @@ export default function Home({ artifacts, contractAddresses }) {
   const onDeploy = async () => {
     setIsLoadingArtifacts(true);
     const { artifacts, addresses } = await fetchContracts(false);
-    console.log(artifacts);
     setContractsArtifacts(artifacts);
     setSelectedContractArtifact(artifacts[0]);
     setIsLoadingArtifacts(false);
-    setAddresses(addresses);
+    setAddresses(JSON.parse(addresses));
   };
 
   useEffect(() => {
@@ -58,7 +57,14 @@ export default function Home({ artifacts, contractAddresses }) {
       init(async ({ getAccountsAsync, connectWalletAsync, Contract }) => {
         const accs = await getAccountsAsync();
         const wallets = await connectWalletAsync();
-        const cont = new Contract(selectedContractArtifact.abi, "0x5FbDB2315678afecb367f032d93F642f64180aa3");
+        const cont = new Contract(
+          selectedContractArtifact.abi,
+          contractAddresses[0],
+          {
+            from:  wallets[0],
+            gasPrice: "20000000000",
+          }
+        );
         window.web3Obj = {
           ...window.web3Obj,
           defaultAccount: wallets[0],
@@ -89,11 +95,13 @@ export default function Home({ artifacts, contractAddresses }) {
       <div>{connectedWallet}</div>
       <div className="flex divide-x h-screen p-4">
         <div>
-          {contractsArtifacts.map((item, i) => (
-            <div key={i}>
-              {item.contractName} - {addresses[i]}
-            </div>
-          ))}
+          {contractsArtifacts &&
+            contractsArtifacts.length &&
+            contractsArtifacts.map((item, i) => (
+              <div key={i}>
+                {item.contractName} - {addresses[i]}
+              </div>
+            ))}
         </div>
         <div className="p-4 flex-grow">
           {selectedContractArtifact && (
