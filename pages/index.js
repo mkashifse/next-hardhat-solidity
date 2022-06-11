@@ -22,7 +22,6 @@ export const getStaticProps = async () => {
 };
 
 export default function Home({ artifacts, contractAddresses }) {
-  debugger;
   const { getMethod, useConnect } = useWeb3();
   const { init, web3 } = useConnect();
   const { ContractForm } = useContractForm();
@@ -68,6 +67,7 @@ export default function Home({ artifacts, contractAddresses }) {
         window.web3Obj = {
           ...window.web3Obj,
           defaultAccount: wallets[0],
+          contractAddress: contractAddresses[0],
           contract: cont,
         };
         setContract(cont);

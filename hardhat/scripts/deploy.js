@@ -10,7 +10,7 @@ const {
 
 const compileAndDeployAllContracts = async () => {
   try {
-    const contractsFileNames = (await readdir("./../contracts")).map(
+    const contractsFileNames = (await readdir("./../hardhat/contracts")).map(
       (item) => item.split(".sol")[0]
     );
 
@@ -21,22 +21,23 @@ const compileAndDeployAllContracts = async () => {
     );
 
     console.log("Deploying...");
-    const contractList = await Promise.all(cFactoryPromiseList);
-    const deployableContracts = await Promise.all(
-      contractList.map((item) => item.deploy("Some text here"))
+    const Contracts = await Promise.all(cFactoryPromiseList);
+    const contractInstances = await Promise.all(
+      Contracts.map((item) => item.deploy("Some text here"))
     );
 
-    await Promise.all(deployableContracts.map((item) => item.deployed()));
-    const adresses = deployableContracts.map((item) => item.address);
+
+    // await Promise.all(contractInstances.map((item) => item.deployed()));
+    const addrs = contractInstances.map((item) => item.address);
     console.log(
       `Deployed ${
-        deployableContracts.length
+        contractInstances.length
       } contracts: ${contractsFileNames.join(",")}`,
-      adresses
+      addrs
     );
     writeFile(
-      "./../../contractsAdresses.json",
-      JSON.stringify(adresses),
+      "./../contractsAddresses.json",
+      JSON.stringify(addrs),
       "utf8",
       (err, resp) => {
         if (err) console.error(err);

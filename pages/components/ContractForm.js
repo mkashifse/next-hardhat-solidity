@@ -93,9 +93,6 @@ const useContractForm = () => {
         );
 
         setAllTransactions(trx);
-
-        console.log(trx.map((item) => web3.utils.hexToAscii(item.input)));
-        console.log(blcks, trx);
       })
       .catch((err) => {
         console.log(err);

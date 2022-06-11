@@ -25,7 +25,7 @@ const fetchArtifacts = async () => {
 };
 
 const fetchAddresses = () => {
-  return readFile("./contractsAdresses.json", "utf-8");
+  return readFile("./contractsAddresses.json", "utf-8");
 };
 
 const compileAndDeploy = () => {

@@ -20,7 +20,7 @@ contract Greeter {
         greeting = _greeting;
     }
 
-    function getMessage() public view returns (string memory) {
+    function getMessage() public pure returns (string memory) {
         return "This is new Message";
     }
 
