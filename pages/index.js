@@ -117,7 +117,9 @@ export default function Home({ artifacts, contractAddresses }) {
             onChange={({ target }) => onSelectContract(target.value)}
           >
             {contractsArtifacts.map((item, i) => (
-              <option value={i}>{item.contractName}</option>
+              <option key={i} value={i}>
+                {item.contractName}
+              </option>
             ))}
           </Select>
           <p className="text-slate-600 font-semibold">

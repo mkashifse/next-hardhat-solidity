@@ -1,8 +1,22 @@
 export const Button = (props) => {
+  const variantCss = "from-violet-600 to-indigo-600";
+  if (props.variant === "info") {
+    variantCss = "from-violet-600 to-indigo-600";
+  }
+  if (props.variant === "success") {
+    variantCss = "from-green-600 to-teal-600";
+  }
+  if (props.variant === "warning") {
+    variantCss = "from-orange-600 to-amber-600";
+  }
+  if (props.variant === "danger") {
+    variantCss = "from-red-600 to-rose-600";
+  }
+
   return (
     <button
       {...props}
-      className={`px-6 p-2  rounded hover:opacity-90 text-white font-semibold  shadow-sm bg-gradient-to-tr from-violet-600 to-indigo-600 ${props.css}`}
+      className={`px-6 p-2  rounded hover:opacity-90 text-white font-semibold  shadow-sm bg-gradient-to-tr ${variantCss}  ${props.css}`}
     >
       {props.children}
     </button>

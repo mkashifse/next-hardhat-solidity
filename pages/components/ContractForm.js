@@ -11,6 +11,9 @@ const useContractForm = () => {
   const [allTransactions, setAllTransactions] = useState([]);
 
   const { getMethod, useConnect } = useWeb3();
+  const chectMutibility = (mut) => {
+    return !(mut === "pure" || mut === "view");
+  };
 
   const onSubmit = (data, event) => {
     const buttonClicked = event.nativeEvent.submitter.name;
@@ -63,7 +66,7 @@ const useContractForm = () => {
 
   const ContractForm = ({ abi }) => {
     return (
-      <form onSubmit={handleSubmit(onSubmit)} className="m-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="m-auto max-w-3xl">
         <div className=" divide-y">
           {abi.map((item, i) => {
             if (item.name) {
@@ -75,6 +78,11 @@ const useContractForm = () => {
                   <div className="w-1/3">
                     <Button
                       css="w-full"
+                      variant={
+                        chectMutibility(item.stateMutability)
+                          ? "danger"
+                          : "info"
+                      }
                       function-type={item.stateMutability}
                       name={item.name}
                     >
@@ -82,7 +90,7 @@ const useContractForm = () => {
                     </Button>
                   </div>
 
-                  <div className="w-2/3 flex">
+                  <div className="w-3/5 flex">
                     {item.outputs && item.outputs.length
                       ? item.outputs.map((output, j) => (
                           <Input
@@ -92,6 +100,7 @@ const useContractForm = () => {
                             name={item.name}
                             register={register}
                             value={formMap[item.name]}
+                            css="w-full"
                           ></Input>
                         ))
                       : ""}
@@ -104,6 +113,7 @@ const useContractForm = () => {
                             name={item.name}
                             value={formMap[item.name]}
                             register={register}
+                            css="w-full"
                           ></Input>
                         ))
                       : ""}
