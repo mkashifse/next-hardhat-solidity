@@ -30,6 +30,9 @@ export default function Home({ artifacts, contractAddresses }) {
   const [contractsArtifacts, setContractsArtifacts] = useState([]);
   const [selectedContractArtifact, setSelectedContractArtifact] =
     useState(null);
+
+  const [selectedConttractAddress, setSelectedConttractAddress] = useState();
+
   const [isLoadingArtifacts, setIsLoadingArtifacts] = useState(false);
 
   const [accounts, setAccounts] = useState([]);
@@ -48,6 +51,7 @@ export default function Home({ artifacts, contractAddresses }) {
 
   useEffect(() => {
     setAddresses(contractAddresses);
+    setSelectedConttractAddress(contractAddresses[0]);
     setContractsArtifacts(artifacts);
     setSelectedContractArtifact(artifacts[0]);
   }, []);
@@ -59,7 +63,7 @@ export default function Home({ artifacts, contractAddresses }) {
         const wallets = await connectWalletAsync();
         const cont = new Contract(
           selectedContractArtifact.abi,
-          contractAddresses[0],
+          selectedConttractAddress,
           {
             from: wallets[0],
             gasPrice: "20000000000",
@@ -68,7 +72,7 @@ export default function Home({ artifacts, contractAddresses }) {
         window.web3Obj = {
           ...window.web3Obj,
           defaultAccount: wallets[0],
-          contractAddress: contractAddresses[0],
+          contractAddress: selectedConttractAddress,
           contract: cont,
         };
         setContract(cont);
@@ -90,37 +94,44 @@ export default function Home({ artifacts, contractAddresses }) {
       });
   }, [selectedContractArtifact]);
 
+  const onSelectContract = (index) => {
+    setSelectedContractArtifact(contractsArtifacts[index]);
+    setSelectedConttractAddress(contractAddresses[index]);
+  };
+
   return (
     <div>
       <ToastContainer></ToastContainer>
       <div className="border p-2 border-b flex justify-between text-sm">
-        <div>
-          <Input></Input>
-          <Select>
-            <option>Salam</option>
+        <div className="w-[320px]">
+          <Select
+            css="w-full"
+            onChange={({ target }) => onSelectContract(target.value)}
+          >
+            {contractsArtifacts.map((item, i) => (
+              <option value={i}>{item.contractName}</option>
+            ))}
           </Select>
+          <p className="text-slate-600 font-semibold">{selectedConttractAddress}</p>
         </div>
         <div>
-          <Button onClick={() => onDeploy()}>Deploy</Button>
+          <div className="flex justify-end space-x-3">
+            <Button onClick={() => onDeploy()}>Deploy</Button>
+            <Button onClick={() => onDeploy()} css="w-[203px]">
+              Connect
+            </Button>
+          </div>
+          <div className="text-right text-slate-500 font-semibold">
+            {connectedWallet}
+          </div>
         </div>
       </div>
-      <div>{connectedWallet}</div>
       <div className="flex divide-x h-screen p-4">
-        <div>
-          {contractsArtifacts &&
-            contractsArtifacts.length &&
-            contractsArtifacts.map((item, i) => (
-              <div key={i}>
-                {item.contractName} - {addresses[i]}
-              </div>
-            ))}
-        </div>
         <div className="p-4 flex-grow">
           {selectedContractArtifact && (
             <ContractForm abi={selectedContractArtifact.abi}></ContractForm>
           )}
         </div>
-        <div></div>
       </div>
     </div>
   );
