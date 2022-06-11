@@ -25,7 +25,7 @@ export const getStaticProps = async () => {
 export default function Home({ artifacts, contractAddresses }) {
   const { getMethod, useConnect } = useWeb3();
   const { init, web3 } = useConnect();
-  const { ContractForm } = useContractForm();
+  const { ContractForm, reset } = useContractForm();
 
   const [contractsArtifacts, setContractsArtifacts] = useState([]);
   const [selectedContractArtifact, setSelectedContractArtifact] =
@@ -99,6 +99,12 @@ export default function Home({ artifacts, contractAddresses }) {
   const onSelectContract = (index) => {
     setSelectedContractArtifact(contractsArtifacts[index]);
     setSelectedConttractAddress(contractAddresses[index]);
+
+    const fields = contractsArtifacts[index].abi
+      .map((item) => item.name)
+      .filter((e) => e)
+      .reduce((prev, curr) => ({ ...prev, [curr]: "" }), {});
+    reset(fields);
   };
 
   return (
@@ -114,7 +120,9 @@ export default function Home({ artifacts, contractAddresses }) {
               <option value={i}>{item.contractName}</option>
             ))}
           </Select>
-          <p className="text-slate-600 font-semibold">{selectedConttractAddress}</p>
+          <p className="text-slate-600 font-semibold">
+            {selectedConttractAddress}
+          </p>
         </div>
         <div>
           <div className="flex justify-end space-x-3">

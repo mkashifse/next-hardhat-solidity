@@ -121,6 +121,7 @@ const useContractForm = () => {
     ContractForm,
     blocks,
     allTransactions,
+    reset,
   };
 };
 
