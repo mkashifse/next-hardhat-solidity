@@ -14,9 +14,9 @@ const useContractForm = () => {
 
   const onSubmit = (data, event) => {
     const buttonClicked = event.nativeEvent.submitter.name;
-    console.dir(event.nativeEvent.submitter);
     const functionType =
       event.nativeEvent.submitter.getAttribute("function-type");
+    const isMutatible = functionType !== "pure" && functionType !== "view";
     const { contract, web3 } = window["web3Obj"];
     getMethod(contract, buttonClicked, data[buttonClicked])
       .then(async (resp) => {
@@ -24,10 +24,13 @@ const useContractForm = () => {
           `${buttonClicked} is executed successfully.!`,
           `Contract Function Success Call`
         );
-        setFormMap({
-          ...formMap,
-          [buttonClicked]: resp,
-        });
+
+        if (!isMutatible) {
+          setFormMap({
+            ...formMap,
+            [buttonClicked]: resp,
+          });
+        }
 
         const earliest = await web3.eth.getBlock("earliest");
         const latest = await web3.eth.getBlock("latest");
@@ -47,7 +50,7 @@ const useContractForm = () => {
 
         setAllTransactions(trx);
 
-        if (functionType !== "pure" && functionType !== "view") {
+        if (isMutatible) {
           reset({
             [buttonClicked]: "",
           });
