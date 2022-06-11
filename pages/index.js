@@ -79,9 +79,11 @@ export default function Home({ artifacts, contractAddresses }) {
         setAccounts(accs);
         setConnectedWallet(wallets[0]);
 
+        console.log(selectedContractArtifact);
+
         const earliest = await web3.eth.getBlock("earliest");
         const latest = await web3.eth.getBlock("latest");
-        console.log(earliest.number, latest.number);
+
         web3.eth.subscribe(
           "logs",
           {

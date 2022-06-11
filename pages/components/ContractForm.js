@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Button, Input } from "./kit";
 
 const useContractForm = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [formMap, setFormMap] = useState({});
   const [blocks, setBlocks] = useState([]);
   const [allTransactions, setAllTransactions] = useState([]);
@@ -13,8 +13,10 @@ const useContractForm = () => {
   const { getMethod, useConnect } = useWeb3();
 
   const onSubmit = (data, event) => {
-    debugger;
     const buttonClicked = event.nativeEvent.submitter.name;
+    console.dir(event.nativeEvent.submitter);
+    const functionType =
+      event.nativeEvent.submitter.getAttribute("function-type");
     const { contract, web3 } = window["web3Obj"];
     getMethod(contract, buttonClicked, data[buttonClicked])
       .then(async (resp) => {
@@ -44,6 +46,12 @@ const useContractForm = () => {
         );
 
         setAllTransactions(trx);
+
+        if (functionType !== "pure" && functionType !== "view") {
+          reset({
+            [buttonClicked]: "",
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -62,7 +70,11 @@ const useContractForm = () => {
                   key={i + item.name}
                 >
                   <div className="w-1/3">
-                    <Button css="w-full" name={item.name}>
+                    <Button
+                      css="w-full"
+                      function-type={item.stateMutability}
+                      name={item.name}
+                    >
                       {item.name}
                     </Button>
                   </div>
